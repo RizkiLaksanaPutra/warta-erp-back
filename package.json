@@ -1,0 +1,41 @@
+{
+    "name": "warta-back",
+    "version": "1.0.0",
+    "description": "warta backend repo",
+    "license": "ISC",
+    "author": "Rizki Laksana Putra",
+    "type": "module",
+    "main": "src/main.js",
+    "scripts": {
+        "test": "jest -i",
+        "start": "nodemon src/main.js"
+    },
+    "jest": {
+        "transform": {
+            "^.+\\.[t|j]sx?$": "babel-jest"
+        }
+    },
+    "prisma": {
+        "seed": "node prisma/seed.js"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.18.0",
+        "bcrypt": "^6.0.0",
+        "dotenv": "^17.2.3",
+        "express": "^5.1.0",
+        "joi": "^18.0.1",
+        "nodemon": "^3.1.10",
+        "winston": "^3.18.3"
+    },
+    "devDependencies": {
+        "@babel/preset-env": "^7.28.5",
+        "@types/bcrypt": "^6.0.0",
+        "@types/express": "^5.0.5",
+        "@types/jest": "^30.0.0",
+        "@types/supertest": "^6.0.3",
+        "babel-jest": "^30.2.0",
+        "jest": "^30.2.0",
+        "prisma": "^6.18.0",
+        "supertest": "^7.1.4"
+    }
+}
