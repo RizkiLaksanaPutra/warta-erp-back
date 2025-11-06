@@ -6,6 +6,6 @@ const userRouter = new express.Router();
 userRouter.use(authMiddleware);
 
 //User API
-userRouter.delete('/logout', userController.logout);
+userRouter.delete('/api/user/logout', userController.logout);
 
 export {userRouter}

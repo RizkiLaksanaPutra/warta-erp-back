@@ -18,6 +18,14 @@ const login = async (request, response, next) => {
     }
 };
 
+const get = async (request, response, next) => {
+    try {
+        const result = await userService.get(request.user.email)
+    } catch (error) {
+        
+    }
+}
+
 const logout = async (request, response, next) => {
     try {
         await userService.logout(request.user.email)

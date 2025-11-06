@@ -17,7 +17,7 @@ describe('POST /login', function () {
     });
 
     it('Should can login with valid credentials', async () => {
-        const result = await supertest(web).post('/login').send({
+        const result = await supertest(web).post('/api/user/login').send({
             email: process.env.EMAIL,
             password: process.env.PASSWORD,
         });
@@ -30,7 +30,7 @@ describe('POST /login', function () {
 
     it('Should 401 when email is wrong', async () => {
         const result = await supertest(web)
-            .post('/login')
+            .post('/api/user/login')
             .send({
                 email: 'no-user-' + Date.now() + '@example.com',
                 password: process.env.PASSWORD,
@@ -43,7 +43,7 @@ describe('POST /login', function () {
     });
 
     it('Should 401 when password is wrong', async () => {
-        const result = await supertest(web).post('/login').send({
+        const result = await supertest(web).post('/api/user/login').send({
             email: process.env.EMAIL,
             password: 'wrong-password',
         });
@@ -65,7 +65,7 @@ describe('DELETE /logout', function () {
     });
 
     it('Should can logout', async () => {
-        const result = await supertest(web).delete('/logout').set('Authorization', 'test')
+        const result = await supertest(web).delete('/api/user/logout').set('Authorization', 'test')
 
         expect(result.status).toBe(200)
         expect(result.body.data).toBe('OK')
