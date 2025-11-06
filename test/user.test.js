@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-describe('POST /login', function () {
+describe('POST /api/user/login', function () {
     beforeEach(async () => {
         await createTestUser();
     });
@@ -18,8 +18,8 @@ describe('POST /login', function () {
 
     it('Should can login with valid credentials', async () => {
         const result = await supertest(web).post('/api/user/login').send({
-            email: process.env.EMAIL,
-            password: process.env.PASSWORD,
+            email: 'test@gmail.com',
+            password: 'rahasia',
         });
 
         logger.info(result.body);
@@ -33,7 +33,7 @@ describe('POST /login', function () {
             .post('/api/user/login')
             .send({
                 email: 'no-user-' + Date.now() + '@example.com',
-                password: process.env.PASSWORD,
+                password: 'rahasia',
             });
 
         logger.info(result.body);
@@ -44,7 +44,7 @@ describe('POST /login', function () {
 
     it('Should 401 when password is wrong', async () => {
         const result = await supertest(web).post('/api/user/login').send({
-            email: process.env.EMAIL,
+            email: 'test@gmail.com',
             password: 'wrong-password',
         });
 
@@ -55,7 +55,32 @@ describe('POST /login', function () {
     });
 });
 
-describe('DELETE /logout', function () {
+describe('GET /api/user/current', function () {
+    beforeEach(async () => {
+        await createTestUser();
+    });
+
+    afterEach(async () => {
+        await removeTestUser();
+    });
+
+    it('should can get current user', async () => {
+        const result = await supertest(web).get('/api/user/current').set('Authorization', 'test');
+
+        expect(result.status).toBe(200);
+        expect(result.body.data.email).toBe('test@gmail.com');
+        expect(result.body.data.name).toBe('test');
+    });
+
+    it('should reject if credential is invalid', async () => {
+        const result = await supertest(web).get('/api/user/current').set('Authorization', 'salah');
+
+        expect(result.status).toBe(401);
+        expect(result.body.errors).toBeDefined()
+    });
+});
+
+describe('DELETE /api/user/logout', function () {
     beforeEach(async () => {
         await createTestUser();
     });
@@ -65,13 +90,13 @@ describe('DELETE /logout', function () {
     });
 
     it('Should can logout', async () => {
-        const result = await supertest(web).delete('/api/user/logout').set('Authorization', 'test')
+        const result = await supertest(web).delete('/api/user/logout').set('Authorization', 'test');
 
-        expect(result.status).toBe(200)
-        expect(result.body.data).toBe('OK')
+        expect(result.status).toBe(200);
+        expect(result.body.data).toBe('OK');
 
-        const user = await getTestUser()
+        const user = await getTestUser();
 
-        expect(user.token).toBeNull()
-    })
+        expect(user.token).toBeNull();
+    });
 });

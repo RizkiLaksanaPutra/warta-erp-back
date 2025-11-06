@@ -21,8 +21,16 @@ const login = async (request, response, next) => {
 const get = async (request, response, next) => {
     try {
         const result = await userService.get(request.user.email)
+
+        response.status(200).json({
+            data: result
+        })
     } catch (error) {
-        
+        logger.error('Get user failed', {
+            email: request.user?.email,
+            error: error.message
+        })
+        next(error)
     }
 }
 
@@ -35,7 +43,7 @@ const logout = async (request, response, next) => {
         })
     } catch (error) {
         logger.error('Logout failed', {
-            email: request.body?.email,
+            email: request.user?.email,
             error: error.message
         })
         next(error)
@@ -44,5 +52,6 @@ const logout = async (request, response, next) => {
 
 export default {
     login,
-    logout
+    logout,
+    get
 };
