@@ -1,5 +1,5 @@
 import { validate } from '../validation/validation.js';
-import { getUserValidation, loginUserValidation } from '../validation/user-validation.js';
+import { getUserValidation, loginUserValidation, updateUserValidation } from '../validation/user-validation.js';
 import { prismaClient } from '../application/database.js';
 import { ResponseError } from '../error/response-error.js';
 import bcrypt from 'bcrypt';
@@ -44,21 +44,56 @@ const get = async (email) => {
 
     const user = await prismaClient.user.findUnique({
         where: {
-            email: email
+            email: email,
         },
         select: {
             email: true,
             name: true,
-
-        }
-    })
+        },
+    });
 
     if (!user) {
         throw new ResponseError(404, 'User is not found');
     }
 
-    return user
-}
+    return user;
+};
+
+const update = async (userId, request) => {
+    const payload = validate(updateUserValidation, request);
+
+    const user = await prismaClient.user.findFirst({
+        where: {
+            id: userId,
+        },
+    });
+
+    if (!user) {
+        throw new ResponseError(404, 'User not found');
+    }
+
+    const shouldRevoke = !!(payload.email || payload.password);
+
+    const data = {
+        ...(payload.email && { email: payload.email }),
+        ...(payload.name && { name: payload.name }),
+        ...(payload.password && { password: await bcrypt.hash(payload.password, 10) }),
+        ...(shouldRevoke && { token: null }),
+    };
+
+    const result = await prismaClient.user.update({
+        where: {
+            id: userId,
+        },
+        data,
+        select: {
+            email: true,
+            name: true,
+        },
+    });
+
+    return result;
+};
 
 const logout = async (email) => {
     email = validate(getUserValidation, email);
@@ -88,6 +123,7 @@ const logout = async (email) => {
 
 export default {
     login,
+    get,
+    update,
     logout,
-    get
 };

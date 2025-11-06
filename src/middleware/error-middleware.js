@@ -17,7 +17,7 @@ const errorMiddleware = async (error, request, response, next) => {
         response
             .status(500)
             .json({
-                errors: error.message,
+                errors: 'Internal server error',
             })
             .end();
     }
