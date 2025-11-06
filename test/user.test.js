@@ -1,7 +1,7 @@
 import { web } from '../src/application/web.js';
 import { prismaClient } from '../src/application/database.js';
 import { logger } from '../src/application/logging.js';
-import { setupUserTest, cleanupUserTest } from './utils/user.util.js';
+import { createTestUser, getTestUser, removeTestUser } from './utils/user.util.js';
 import supertest from 'supertest';
 import dotenv from 'dotenv';
 
@@ -9,11 +9,11 @@ dotenv.config();
 
 describe('POST /login', function () {
     beforeEach(async () => {
-        await setupUserTest();
+        await createTestUser();
     });
 
     afterEach(async () => {
-        await cleanupUserTest();
+        await removeTestUser();
     });
 
     it('Should can login with valid credentials', async () => {
@@ -29,10 +29,12 @@ describe('POST /login', function () {
     });
 
     it('Should 401 when email is wrong', async () => {
-        const result = await supertest(web).post('/login').send({
-            email: 'no-user-' + Date.now() + '@example.com',
-            password: process.env.PASSWORD,
-        });
+        const result = await supertest(web)
+            .post('/login')
+            .send({
+                email: 'no-user-' + Date.now() + '@example.com',
+                password: process.env.PASSWORD,
+            });
 
         logger.info(result.body);
 
@@ -51,5 +53,25 @@ describe('POST /login', function () {
         expect(result.status).toBe(401);
         expect(result.body.errors).toBe('Email or password is wrong');
     });
+});
 
+describe('DELETE /logout', function () {
+    beforeEach(async () => {
+        await createTestUser();
+    });
+
+    afterEach(async () => {
+        await removeTestUser();
+    });
+
+    it('Should can logout', async () => {
+        const result = await supertest(web).delete('/logout').set('Authorization', 'test')
+
+        expect(result.status).toBe(200)
+        expect(result.body.data).toBe('OK')
+
+        const user = await getTestUser()
+
+        expect(user.token).toBeNull()
+    })
 });

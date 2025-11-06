@@ -1,23 +1,29 @@
 import { prismaClient } from '../../src/application/database.js';
-import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
 
-dotenv.config();
-
-export async function clearUserToken() {
-    await prismaClient.user.update({
-        where: {
-            email: process.env.EMAIL,
-        },
+export const createTestUser = async () => {
+    await prismaClient.user.create({
         data: {
-            token: null,
-        },
-    });
+            email: 'test@gmail.com',
+            name: 'test',
+            password: await bcrypt.hash('rahasia', 10),
+            token: 'test'
+        }
+    })
 }
 
-export async function setupUserTest() {
-    await clearUserToken()
+export const removeTestUser = async () => {
+    await prismaClient.user.delete({
+        where: {
+            email: 'test@gmail.com'
+        }
+    })
 }
 
-export async function cleanupUserTest() {
-    await clearUserToken()
+export const getTestUser = async () => {
+    return prismaClient.user.findUnique({
+        where: {
+            email: 'test@gmail.com'
+        }
+    })
 }

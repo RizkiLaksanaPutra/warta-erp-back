@@ -18,6 +18,23 @@ const login = async (request, response, next) => {
     }
 };
 
+const logout = async (request, response, next) => {
+    try {
+        await userService.logout(request.user.email)
+
+        response.status(200).json({
+            data: 'OK'
+        })
+    } catch (error) {
+        logger.error('Logout failed', {
+            email: request.body?.email,
+            error: error.message
+        })
+        next(error)
+    }
+}
+
 export default {
     login,
+    logout
 };
