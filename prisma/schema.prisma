@@ -14,33 +14,53 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid()) @db.VarChar(36)
-  email      String   @unique @db.VarChar(200)
-  name       String   @db.VarChar(100)
-  password   String   @db.VarChar(100)
-  token      String?  @db.VarChar(100)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-
-  employees Employee[] @relation("UserEmployees")
+  id         String     @id @default(uuid()) @db.VarChar(36)
+  email      String     @unique @db.VarChar(200)
+  name       String     @db.VarChar(100)
+  password   String     @db.VarChar(100)
+  token      String?    @db.VarChar(100)
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  branches   Branches[] @relation("UserBranches")
+  employees  Employee[] @relation("UserEmployees")
 
   @@map("users")
+}
+
+model Branches {
+  id          Int        @id @default(autoincrement())
+  userId      String     @db.VarChar(36)
+  code        String     @unique @db.VarChar(20)
+  name        String     @db.VarChar(100)
+  phone       String?    @db.VarChar(20)
+  street      String?    @db.VarChar(255)
+  city        String?    @db.VarChar(100)
+  province    String?    @db.VarChar(100)
+  postal_code String?    @db.VarChar(10)
+  start_hours String?    @db.VarChar(8)
+  end_hours   String?    @db.VarChar(8)
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  owner       User       @relation("UserBranches", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  employees   Employee[]
+
+  @@map("branches")
 }
 
 model Employee {
   id         Int            @id @default(autoincrement())
   userId     String         @db.VarChar(36)
+  branchId   Int
   name       String         @db.VarChar(100)
   phone      String?        @db.VarChar(20)
   position   String         @db.VarChar(60)
   salary     Int
   join       DateTime
   status     EmployeeStatus @default(ACTIVE)
-
   created_at DateTime       @default(now())
   updated_at DateTime       @updatedAt
-
   user       User           @relation("UserEmployees", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  branches   Branches?      @relation(fields: [branchId], references: [id])
 
   @@map("employees")
 }
