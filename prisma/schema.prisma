@@ -39,7 +39,7 @@ model Branch {
     postal_code String?    @db.VarChar(10)
     start_hours String?    @db.VarChar(8)
     end_hours   String?    @db.VarChar(8)
-    is_active   Boolean    @default(true)
+    photo       String?    @db.VarChar(255)
     created_at  DateTime   @default(now())
     updated_at  DateTime   @updatedAt
     owner       User       @relation("UserBranches", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
