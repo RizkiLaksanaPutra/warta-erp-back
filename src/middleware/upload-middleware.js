@@ -44,7 +44,7 @@ const createUploadConfig = (allowedTypes, maxSize, allowedExtensionText) => ({
 });
 
 const imageUploadConfig = createUploadConfig(
-    ['images/jpeg', 'images/jpg', 'image/png'],
+    ['image/jpeg', 'image/jpg', 'image/png'],
     5 * 1024 * 1024,
     'JPG, JPEG, and PNG'
 )
@@ -60,7 +60,7 @@ const createUploadWrapper = (uploadConfig, fieldName) => {
 
     return (request, response, next) => {
         upload(request, response, (error) => {
-            if (error && response.file) {
+            if (error && request.file?.path) {
                 deleteFile(request.file.path)
             }
             next(error)
@@ -69,11 +69,11 @@ const createUploadWrapper = (uploadConfig, fieldName) => {
 };
 
 export const createImageUpload = (fieldName) => {
-    createUploadWrapper(imageUploadConfig, fieldName)
+    return createUploadWrapper(imageUploadConfig, fieldName)
 };
 
 export const createDocumentUpload = (fieldName) => {
-    createUploadWrapper(documentUploadConfig, fieldName)
+    return createUploadWrapper(documentUploadConfig, fieldName)
 };
 
 export const cleanupFile = (file) => {
