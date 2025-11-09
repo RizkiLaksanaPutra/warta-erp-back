@@ -14,5 +14,6 @@ userRouter.delete('/api/user/logout', userController.logout);
 //Branch API
 userRouter.post('/api/branches', branchController.create);
 userRouter.get('/api/branches', branchController.search);
+userRouter.get('/api/branches/:branchId', branchController.get);
 
 export { userRouter };

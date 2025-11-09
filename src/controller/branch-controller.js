@@ -52,7 +52,28 @@ const search = async (request, response, next) => {
     }
 };
 
+const get = async (request, response, next) => {
+    try {
+        const userId = request.user;
+        const branchId = request.params.branchId;
+
+        const result = await branchService.get(userId, branchId);
+
+        response.status(200).json({
+            data: result,
+        });
+    } catch (error) {
+        logger.error('Get branch failed', {
+            userId: request.user?.id,
+            branchId: request.params?.id,
+            error: error.message,
+        });
+        next(error);
+    }
+};
+
 export default {
     create,
     search,
+    get,
 };

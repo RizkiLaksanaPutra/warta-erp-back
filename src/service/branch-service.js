@@ -1,6 +1,6 @@
 import { prismaClient } from '../application/database.js';
 import { ResponseError } from '../error/response-error.js';
-import { createBranchValidation, searchBranchValidation } from '../validation/branch-validation.js';
+import { createBranchValidation, getBranchValidation, searchBranchValidation } from '../validation/branch-validation.js';
 import { validate } from '../validation/validation.js';
 import path from 'path';
 import fs from 'fs';
@@ -77,7 +77,38 @@ const search = async (user, request) => {
     };
 };
 
+const get = async (user, request) => {
+    request = validate(getBranchValidation, request);
+
+    const result = await prismaClient.branch.findFirst({
+        where: {
+            userId: user.id,
+            id: request.id,
+        },
+        select: {
+            id: true,
+            code: true,
+            name: true,
+            phone: true,
+            street: true,
+            city: true,
+            province: true,
+            postal_code: true,
+            start_hours: true,
+            end_hours: true,
+            photo: true,
+        },
+    });
+
+    if (!result) {
+        throw new ResponseError(404, 'Branch not found');
+    }
+
+    return result;
+};
+
 export default {
     create,
     search,
+    get,
 };

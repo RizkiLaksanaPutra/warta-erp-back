@@ -132,3 +132,26 @@ describe('GET /api/branches', function () {
         expect(res.body.data.length).toBeLessThanOrEqual(10);
     });
 });
+
+describe('GET /api/branches/:branchId', function () {
+    let owner;
+
+    beforeEach(async () => {
+        await createTestUser();
+        owner = await getTestUser();
+        await createTestManyBranch(owner.id);
+    });
+
+    afterEach(async () => {
+        await deleteTestBranch(owner.id);
+        await removeTestUser();
+    });
+
+    it('Should can get specific branch', async () => {
+        const result = await supertest(web).get('/api/branches/5').set('Authorization', 'Bearer test')
+
+        console.log(result.body.data)
+
+        expect(result.status).toBe(200)
+    })
+})

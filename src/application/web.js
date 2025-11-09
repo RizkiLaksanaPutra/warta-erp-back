@@ -1,11 +1,22 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
+import cors from 'cors';
 import { publicRouter } from '../route/public-api.js';
 import { userRouter } from '../route/api.js';
 import { errorMiddleware } from '../middleware/error-middleware.js';
 
 export const web = express();
+
+web.use(
+    cors({
+        origin: 'http://localhost:3000',
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
+    })
+);
+
 web.use('/uploads', express.static('uploads'));
 
 web.use(express.json());

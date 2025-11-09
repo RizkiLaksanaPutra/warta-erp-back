@@ -24,4 +24,6 @@ const searchBranchValidation = Joi.object({
     order_dir: Joi.string().valid('asc', 'desc').default('desc')
 })
 
-export { createBranchValidation, searchBranchValidation };
+const getBranchValidation = Joi.number().integer().positive().required();
+
+export { createBranchValidation, searchBranchValidation, getBranchValidation };
