@@ -1,6 +1,6 @@
 import { prismaClient } from '../application/database.js';
 import { ResponseError } from '../error/response-error.js';
-import { createBranchValidation } from '../validation/branch-validation.js';
+import { createBranchValidation, searchBranchValidation } from '../validation/branch-validation.js';
 import { validate } from '../validation/validation.js';
 import path from 'path';
 import fs from 'fs';
@@ -44,6 +44,40 @@ const create = async (request, file, user) => {
     return result;
 };
 
+const search = async (user, request) => {
+    const params = validate(searchBranchValidation, request);
+
+    const where = {
+        userId: user.id,
+        ...(params.name && params.name.trim() !== '' && { name: { contains: params.name } }),
+    };
+
+    const skip = (params.page - 1) * params.size;
+    const take = params.size;
+
+    const [totalItems, branches] = await Promise.all([
+        prismaClient.branch.count({ where }),
+        prismaClient.branch.findMany({ where, skip, take, orderBy: { [params.order_by]: params.order_dir } }),
+    ]);
+
+    const totalPage = Math.ceil(totalItems / params.size) || 0;
+
+    return {
+        data: branches,
+        paging: {
+            page: params.page,
+            size: params.size,
+            total_item: totalItems,
+            total_page: totalPage,
+            has_prev: params.page > 1,
+            has_next: params.page < totalPage,
+            order_by: params.order_by,
+            order_dir: params.order_dir,
+        },
+    };
+};
+
 export default {
     create,
+    search,
 };

@@ -12,6 +12,7 @@ userRouter.patch('/api/user/current', userController.update);
 userRouter.delete('/api/user/logout', userController.logout);
 
 //Branch API
-userRouter.post('/branches', branchController.create);
+userRouter.post('/api/branches', branchController.create);
+userRouter.get('/api/branches', branchController.search);
 
 export { userRouter };

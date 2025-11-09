@@ -35,6 +35,24 @@ const create = async (request, response, next) => {
     });
 };
 
+const search = async (request, response, next) => {
+    try {
+        const result = await branchService.search(request.user, request.query);
+
+        response.status(200).json({
+            data: result.data,
+            paging: result.paging,
+        });
+    } catch (error) {
+        logger.error('Search branch failed', {
+            userId: request.user?.id,
+            error: error.message,
+        });
+        next(error);
+    }
+};
+
 export default {
     create,
+    search,
 };

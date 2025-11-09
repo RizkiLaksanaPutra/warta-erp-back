@@ -16,4 +16,12 @@ const createBranchValidation = Joi.object({
         .optional(),
 });
 
-export { createBranchValidation };
+const searchBranchValidation = Joi.object({
+    page: Joi.number().integer().min(1).positive().default(1),
+    size: Joi.number().integer().min(1).positive().max(100).default(10),
+    name: Joi.string().optional(),
+    order_by: Joi.string().valid('created_at', 'name', 'code').default('created_at'),
+    order_dir: Joi.string().valid('asc', 'desc').default('desc')
+})
+
+export { createBranchValidation, searchBranchValidation };
