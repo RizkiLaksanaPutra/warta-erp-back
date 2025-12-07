@@ -40,15 +40,15 @@ const update = async (request, response, next) => {
 
         const result = await userService.update(userId, request.body);
 
-        response.status(200).json({
+        return response.status(200).json({
             data: result,
         });
     } catch (error) {
         logger.error('Update profile failed', {
-            userId: req.user?.id,
-            error: e.message,
+            userId: request.user?.id,
+            error: error.message,
         });
-        next(e);
+        return next(error);
     }
 };
 

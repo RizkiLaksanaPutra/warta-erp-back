@@ -6,15 +6,13 @@ export const authMiddleware = async (request, response, next) => {
         const [type, token] = auth.split(' ');
 
         if (type !== 'Bearer' || !token) {
-            response.status(401).json({
+            return response.status(401).json({
                 errors: 'Unauthorized',
             });
         }
 
         const user = await prismaClient.user.findFirst({
-            where: {
-                token: token,
-            },
+            where: { token },
             select: {
                 id: true,
                 email: true,
@@ -23,14 +21,14 @@ export const authMiddleware = async (request, response, next) => {
         });
 
         if (!user) {
-            response.status(401).json({
+            return response.status(401).json({
                 errors: 'Unauthorized',
             });
         }
 
         request.user = user;
-        next();
+        return next();
     } catch (error) {
-        next(error);
+        return next(error);
     }
 };
