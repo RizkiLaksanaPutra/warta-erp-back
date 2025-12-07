@@ -16,13 +16,16 @@ async function main() {
         create: {
             email: process.env.EMAIL,
             name: 'Rizki Laksana Putra',
+            position: 'Owner',
             password: password,
         },
     });
 }
 
 main()
-    .then(() => prismaClient.$disconnect())
+    .then(async () => {
+        await prismaClient.$disconnect();
+    })
     .catch(async (error) => {
         logger.error(error);
         await prismaClient.$disconnect();

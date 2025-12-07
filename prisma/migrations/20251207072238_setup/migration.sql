@@ -3,6 +3,7 @@ CREATE TABLE `users` (
     `id` VARCHAR(36) NOT NULL,
     `email` VARCHAR(200) NOT NULL,
     `name` VARCHAR(100) NOT NULL,
+    `position` VARCHAR(60) NOT NULL,
     `password` VARCHAR(100) NOT NULL,
     `token` VARCHAR(100) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -25,7 +26,7 @@ CREATE TABLE `branches` (
     `postal_code` VARCHAR(10) NULL,
     `start_hours` VARCHAR(8) NULL,
     `end_hours` VARCHAR(8) NULL,
-    `is_active` BOOLEAN NOT NULL DEFAULT true,
+    `photo` VARCHAR(255) NULL,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL,
 

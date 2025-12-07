@@ -49,6 +49,7 @@ const get = async (email) => {
         select: {
             email: true,
             name: true,
+            position: true,
         },
     });
 
